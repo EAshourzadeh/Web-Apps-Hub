@@ -39,7 +39,7 @@ Because the hub is a single self-contained HTML file, it requires no build comma
 
 ## Run
 
-Open  in a modern browser.
+Open https://webapps-hub.learninglabs.workers.dev/ in a modern browser.
 
 ---
 
