@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart English — Interactive Classroom Games Hub</title>
+    <style>
+      :root {
+        --bg: #0b1120;
+        --surface: #131c31;
+        --surface-elevated: #1b2640;
+        --border: #263450;
+        --border-hover: #38bdf8;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --accent: #38bdf8;
+        --accent-hover: #0ea5e9;
+        --grade5-color: #38bdf8;
+        --grade6-color: #a78bfa;
+        --video-btn: #f43f5e;
+        --video-btn-hover: #e11d48;
+        --radius: 14px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background-color: var(--bg);
+        color: var(--text-main);
+        line-height: 1.5;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        background: radial-gradient(
+          circle at top center,
+          #1e293b 0%,
+          var(--bg) 75%
+        );
+        border-bottom: 1px solid var(--border);
+        padding: 2.75rem 1.5rem 2rem;
+        text-align: center;
+      }
+
+      .brand-pill {
+        display: inline-block;
+        background: rgba(56, 189, 248, 0.12);
+        color: var(--accent);
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        margin-bottom: 0.85rem;
+      }
+
+      header h1 {
+        font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+      }
+
+      header p {
+        color: var(--text-muted);
+        max-width: 680px;
+        margin: 0 auto 1.75rem;
+        font-size: 1.02rem;
+      }
+
+      /* Grade Navigation Tabs */
+      .grade-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+        max-width: 960px;
+        margin: 0 auto 1.25rem;
+      }
+
+      .grade-btn {
+        background: var(--surface);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        transition: all 0.18s ease;
+      }
+
+      .grade-btn:hover {
+        color: var(--text-main);
+        border-color: var(--accent);
+        background: var(--surface-elevated);
+      }
+
+      .grade-btn.active {
+        background: var(--accent);
+        color: #0b1120;
+        border-color: var(--accent);
+      }
+
+      .grade-count {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.1rem 0.42rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: inherit;
+      }
+
+      .grade-btn.active .grade-count {
+        background: rgba(11, 17, 32, 0.18);
+      }
+
+      /* Secondary Controls: Unit Filter + Search */
+      .sub-controls {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(38, 52, 80, 0.6);
+      }
+
+      .unit-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+
+      .unit-btn {
+        background: transparent;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        padding: 0.32rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.18s ease;
+      }
+
+      .unit-btn:hover {
+        color: var(--text-main);
+        border-color: var(--text-muted);
+      }
+
+      .unit-btn.active {
+        background: var(--surface-elevated);
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .search-box {
+        position: relative;
+        min-width: 240px;
+        flex: 0 1 280px;
+      }
+
+      .search-box input {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text-main);
+        padding: 0.45rem 0.85rem 0.45rem 2.1rem;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        outline: none;
+        transition: border-color 0.2s ease;
+      }
+
+      .search-box input:focus {
+        border-color: var(--accent);
+      }
+
+      .search-box span {
+        position: absolute;
+        left: 0.7rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        pointer-events: none;
+      }
+
+      main {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 2.25rem 1.5rem 4rem;
+        flex: 1;
+      }
+
+      .results-meta {
+        color: var(--text-muted);
+        font-size: 0.88rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition:
+          transform 0.2s ease,
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        border-color: var(--border-hover);
+        box-shadow: 0 14px 28px -10px rgba(0, 0, 0, 0.55);
+      }
+
+      .card-banner {
+        height: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.4rem;
+        position: relative;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .badge-row {
+        position: absolute;
+        top: 0.8rem;
+        left: 0.8rem;
+        right: 0.8rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        pointer-events: none;
+      }
+
+      .grade-pill {
+        background: rgba(11, 17, 32, 0.88);
+        backdrop-filter: blur(4px);
+        padding: 0.22rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+
+      .grade-pill[data-grade="Grade 5"] {
+        color: var(--grade5-color);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+      }
+
+      .grade-pill[data-grade="Grade 6"] {
+        color: var(--grade6-color);
+        border: 1px solid rgba(167, 139, 250, 0.35);
+      }
+
+      .unit-pill {
+        background: rgba(11, 17, 32, 0.85);
+        color: #e2e8f0;
+        padding: 0.22rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.74rem;
+        font-weight: 600;
+      }
+
+      .card-body {
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+
+      .card-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.45rem;
+      }
+
+      .card-desc {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 1.15rem;
+        flex: 1;
+      }
+
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.38rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .tag {
+        background: rgba(56, 189, 248, 0.1);
+        color: #7dd3fc;
+        font-size: 0.73rem;
+        font-weight: 600;
+        padding: 0.18rem 0.52rem;
+        border-radius: 5px;
+      }
+
+      .card-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        padding: 0.6rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition:
+          background 0.2s ease,
+          opacity 0.2s ease;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #0b1120;
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-hover);
+      }
+
+      .btn-video {
+        background: var(--video-btn);
+        color: #ffffff;
+      }
+
+      .btn-video:hover {
+        background: var(--video-btn-hover);
+      }
+
+      .btn[aria-disabled="true"] {
+        opacity: 0.35;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem 1.5rem;
+        background: var(--surface);
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+        color: var(--text-muted);
+      }
+
+      .empty-state h3 {
+        color: var(--text-main);
+        margin-bottom: 0.4rem;
+        font-size: 1.15rem;
+      }
+
+      /* Modal Player */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(2, 6, 23, 0.88);
+        backdrop-filter: blur(6px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1.25rem;
+        z-index: 1000;
+      }
+
+      .modal-backdrop.open {
+        display: flex;
+      }
+
+      .modal {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        width: 100%;
+        max-width: 1140px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.85rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        background: #0f172a;
+        gap: 1rem;
+      }
+
+      .modal-title {
+        font-weight: 700;
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .modal-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        flex-shrink: 0;
+      }
+
+      .external-link {
+        color: var(--accent);
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .external-link:hover {
+        text-decoration: underline;
+      }
+
+      .close-btn {
+        background: var(--surface-elevated);
+        border: 1px solid var(--border);
+        color: var(--text-main);
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .close-btn:hover {
+        border-color: var(--accent);
+      }
+
+      .modal-frame-wrap {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background: #000;
+      }
+
+      .modal-frame-wrap iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+
+      footer {
+        text-align: center;
+        padding: 1.5rem;
+        border-top: 1px solid var(--border);
+        color: var(--text-muted);
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <span class="brand-pill">Ankara Yayıncılık · Smart English</span>
+      <h1>Interactive Classroom Games Hub</h1>
+      <p>
+        Smartboard-ready ESL/EFL web applications and video walkthroughs
+        organized by grade level and curriculum unit.
+      </p>
+
+      <nav class="grade-tabs" id="gradeBar" aria-label="Filter by grade">
+        <!-- Grade tabs generated dynamically -->
+      </nav>
+
+      <div class="sub-controls">
+        <div
+          class="unit-filters"
+          id="unitBar"
+          aria-label="Filter by theme or unit"
+        >
+          <!-- Unit filters generated dynamically -->
+        </div>
+        <div class="search-box">
+          <span aria-hidden="true">🔍</span>
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Search games, grammar, topics..."
+            aria-label="Search games"
+          />
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="results-meta" id="resultsMeta"></div>
+      <div class="grid" id="appsGrid"></div>
+    </main>
+
+    <footer>
+      Created by Ehsan Ashour Zadeh · Built with dependency-free HTML, CSS &amp;
+      JavaScript for classroom smartboards and web deployment.
+    </footer>
+
+    <!-- Interactive Preview Modal -->
+    <div
+      class="modal-backdrop"
+      id="previewModal"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="modal">
+        <div class="modal-header">
+          <span class="modal-title" id="modalTitle">Preview</span>
+          <div class="modal-controls">
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener"
+              class="external-link"
+              id="modalExternalLink"
+              >Open Fullscreen in New Tab ↗</a
+            >
+            <button
+              class="close-btn"
+              id="closeModalBtn"
+              aria-label="Close modal"
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+        <div class="modal-frame-wrap">
+          <iframe
+            id="modalIframe"
+            allow="
+              accelerometer;
+              autoplay;
+              clipboard-write;
+              encrypted-media;
+              gyroscope;
+              picture-in-picture;
+              fullscreen;
+            "
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /**
+       * GRADES LIST
+       * Supports All Grades plus Grade 2 through Grade 8.
+       */
+      const GRADES = [
+        "All Grades",
+        "Grade 2",
+        "Grade 3",
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7",
+        "Grade 8",
+      ];
+
+      /**
+       * PORTFOLIO CATALOG
+       * Add new games for Grade 2, 3, 4, 7, or 8 by appending objects to this array.
+       * Add YouTube embed URLs (e.g., "https://www.youtube.com/embed/VIDEO_ID") to videoUrl
+       * to automatically activate the "Watch Video" button on each card.
+       */
+      const APPS = [
+        // ==================== GRADE 5 ====================
+        {
+          grade: "Grade 5",
+          unit: "Theme 1",
+          title: "Pizza Word Race",
+          icon: "🍕",
+          gradient: "linear-gradient(135deg, #f97316, #dc2626)",
+          description:
+            "Simultaneous team word-building race for School Life vocabulary. Teams race against a 15–45s timer using three-letter pizza groups to collect all six slices.",
+          tags: ["School Life", "Vocabulary", "Timed Team Race"],
+          appUrl: "https://pizza-word-race.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 5",
+          unit: "Theme 2",
+          title: "Snakes and Ladders",
+          icon: "🪜",
+          gradient: "linear-gradient(135deg, #eab308, #d97706)",
+          description:
+            "Animated 1–6 movement wheel and 30-square board game covering Classroom Life vocabulary, ladders, snakes, and teacher-guided retry options.",
+          tags: ["Classroom Life", "Board Race", "Q&A"],
+          appUrl: "https://snakes-and-ladders.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 5",
+          unit: "Theme 3",
+          title: "Play and Win!",
+          icon: "🏆",
+          gradient: "linear-gradient(135deg, #ec4899, #be185d)",
+          description:
+            "36-box territory capture board game where teams spin the movement wheel, complete spoken or acted challenges, and race to claim 18 boxes.",
+          tags: ["Speaking & Acting", "Territory Board", "2–4 Teams"],
+          appUrl: "https://play-and-win.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 5",
+          unit: "Theme 4",
+          title: "Family Life Spin & Speak",
+          icon: "🎡",
+          gradient: "linear-gradient(135deg, #10b981, #059669)",
+          description:
+            "Four-stage pencil spinner combining Who, When, Activity, and Sentence Form prompts with a built-in grammatical model sentence generator.",
+          tags: ["Family Life", "Grammar Synthesis", "4-Part Spinner"],
+          appUrl: "https://family-life-spin.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 5",
+          unit: "Theme 5",
+          title: "Comparison Guessing Game",
+          icon: "⚖️",
+          gradient: "linear-gradient(135deg, #3b82f6, #1d4ed8)",
+          description:
+            "Clue-giver speaking challenge across 5 categories and 30 pictures, featuring Private Peek reveal controls and comparative adjective sentence frames.",
+          tags: ["Comparatives", "Clue Giving", "Private Peek"],
+          appUrl: "https://comparison-guessing.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 5",
+          unit: "Theme 6",
+          title: "Food Fun Run!",
+          icon: "🥗",
+          gradient: "linear-gradient(135deg, #84cc16, #15803d)",
+          description:
+            "21-square Food and Drinks board race with Food Number Shuffle (1–4), Question/Picture/Action challenges, and a final gate challenge.",
+          tags: ["Food & Drinks", "Board Race", "21 Squares"],
+          appUrl: "https://food-fun-run.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 5",
+          unit: "Theme 7",
+          title: "Animal Detective!",
+          icon: "🦁",
+          gradient: "linear-gradient(135deg, #a855f7, #7e22ce)",
+          description:
+            "24-animal yes/no deduction game with Secret Keeper and Detective roles, tappable card elimination, and Unlimited or 10-Question modes.",
+          tags: ["Animals", "Yes/No Questions", "Deduction"],
+          appUrl: "https://animal-detective.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 5",
+          unit: "Theme 8",
+          title: "Holiday Bingo",
+          icon: "🏖️",
+          gradient: "linear-gradient(135deg, #06b6d4, #0369a1)",
+          description:
+            "36-word listening and calling bingo game for 2–6 groups featuring rotating callers, Quick (4 of 6) or Full Card modes, and automatic podium rankings.",
+          tags: ["Holidays", "Listening", "2–6 Groups"],
+          appUrl: "https://holiday-bingo.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+
+        // ==================== GRADE 6 ====================
+        {
+          grade: "Grade 6",
+          unit: "Game 1",
+          title: "Secret Locker — Classroom Battle",
+          icon: "🔐",
+          gradient: "linear-gradient(135deg, #6366f1, #4338ca)",
+          description:
+            "4×4 tactical speaking grid where teams choose visible locker prompts, complete speaking tasks aloud, and race to connect four lockers in a row.",
+          tags: ["Speaking", "4-in-a-Row Grid", "Strategy"],
+          appUrl: "https://secret-locker.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 6",
+          unit: "Game 2",
+          title: "Study Trail — Race to the Treasure",
+          icon: "🤿",
+          gradient: "linear-gradient(135deg, #0ea5e9, #1e40af)",
+          description:
+            "20-stop underwater trail adventure culminating in a 30-second Final Challenge speech on study habits, learning methods, and daily routines.",
+          tags: ["Study Habits", "20-Stop Trail", "30s Speech"],
+          appUrl: "https://study-trail.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 6",
+          unit: "Game 3",
+          title: "Spot It First!",
+          icon: "🔍",
+          gradient: "linear-gradient(135deg, #f59e0b, #b45309)",
+          description:
+            "Interactive classroom picture hunt using polygon hotspot detection, animal team tokens, and a 10-second teacher answer-area reveal tool.",
+          tags: ["Picture Hunt", "Hotspot Board", "Visual Search"],
+          appUrl: "https://spot-it-first.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 6",
+          unit: "Theme 4",
+          title: "Mission: Save Pippa!",
+          icon: "🧭",
+          gradient: "linear-gradient(135deg, #14b8a6, #0f766e)",
+          description:
+            "15-stop adventure board practicing Present Progressive for the Future with a 1–6 Journey Spinner, Clues, Lost Trails, and stop illustrations.",
+          tags: ["Present Progressive", "Adventure Board", "15 Stops"],
+          appUrl: "https://save-pippa.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 6",
+          unit: "Theme 5",
+          title: "Festival Dash",
+          icon: "🎪",
+          gradient: "linear-gradient(135deg, #f43f5e, #9f1239)",
+          description:
+            "25-space festival route featuring branching task outcomes, Green Light boosts, Train shortcuts, and Traffic Jam/No Parking turn penalties.",
+          tags: ["Festivals", "25-Space Board", "Branching Rules"],
+          appUrl: "https://festival-dash.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 6",
+          unit: "Game 6",
+          title: "Wheel Traveler",
+          icon: "🌍",
+          gradient: "linear-gradient(135deg, #8b5cf6, #5b21b6)",
+          description:
+            "Dual-ring concentric spinner pairing countries and travel topics across 25 learning combinations with sentence starters and Excellent (2-pt) bonuses.",
+          tags: ["Countries & Travel", "Dual Spinner", "Sentence Building"],
+          appUrl: "https://wheel-traveler.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 6",
+          unit: "Unit 7",
+          title: "Eco Roots — Grow, Care, Protect!",
+          icon: "🌱",
+          gradient: "linear-gradient(135deg, #22c55e, #15803d)",
+          description:
+            "25-space environmental speaking board with a 1–4 spinner, eco tokens, one-retry support, and a final Save the Earth challenge on Space 25.",
+          tags: ["Environment", "25 Prompts", "Speaking"],
+          appUrl: "https://eco-roots.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+        {
+          grade: "Grade 6",
+          unit: "Unit 8",
+          title: "Mission to the Future",
+          icon: "🚀",
+          gradient: "linear-gradient(135deg, #3b82f6, #312e81)",
+          description:
+            "19-space sci-fi board game with a six-sector Launch Spinner, future-language missions, warp boosts, and a position-swap space on Space 18.",
+          tags: ["Future Tense", "Space Board", "Position Swap"],
+          appUrl: "https://mission-to-the-future.smart-english.workers.dev/",
+          videoUrl: "",
+        },
+      ];
+
+      // State
+      let selectedGrade = "All Grades";
+      let selectedUnit = "All Units";
+      let searchQuery = "";
+
+      // DOM Elements
+      const gradeBar = document.getElementById("gradeBar");
+      const unitBar = document.getElementById("unitBar");
+      const searchInput = document.getElementById("searchInput");
+      const appsGrid = document.getElementById("appsGrid");
+      const resultsMeta = document.getElementById("resultsMeta");
+      const modal = document.getElementById("previewModal");
+      const modalTitle = document.getElementById("modalTitle");
+      const modalIframe = document.getElementById("modalIframe");
+      const modalExternalLink = document.getElementById("modalExternalLink");
+      const closeModalBtn = document.getElementById("closeModalBtn");
+
+      function renderGradeTabs() {
+        gradeBar.innerHTML = "";
+        GRADES.forEach((grade) => {
+          const count =
+            grade === "All Grades"
+              ? APPS.length
+              : APPS.filter((app) => app.grade === grade).length;
+
+          const btn = document.createElement("button");
+          btn.className = `grade-btn ${selectedGrade === grade ? "active" : ""}`;
+          btn.dataset.grade = grade;
+          btn.innerHTML = `${grade} <span class="grade-count">${count}</span>`;
+          gradeBar.appendChild(btn);
+        });
+      }
+
+      function renderUnitFilters() {
+        const gradeApps =
+          selectedGrade === "All Grades"
+            ? APPS
+            : APPS.filter((app) => app.grade === selectedGrade);
+
+        const units = [
+          "All Units",
+          ...new Set(gradeApps.map((app) => app.unit)),
+        ];
+        if (!units.includes(selectedUnit)) {
+          selectedUnit = "All Units";
+        }
+
+        unitBar.innerHTML = "";
+        if (units.length <= 1) return;
+
+        units.forEach((unit) => {
+          const btn = document.createElement("button");
+          btn.className = `unit-btn ${selectedUnit === unit ? "active" : ""}`;
+          btn.dataset.unit = unit;
+          btn.textContent = unit;
+          unitBar.appendChild(btn);
+        });
+      }
+
+      function renderCards() {
+        const q = searchQuery.trim().toLowerCase();
+
+        const filtered = APPS.filter((app) => {
+          const matchesGrade =
+            selectedGrade === "All Grades" || app.grade === selectedGrade;
+          const matchesUnit =
+            selectedUnit === "All Units" || app.unit === selectedUnit;
+          const matchesSearch =
+            !q ||
+            app.title.toLowerCase().includes(q) ||
+            app.description.toLowerCase().includes(q) ||
+            app.unit.toLowerCase().includes(q) ||
+            app.tags.some((t) => t.toLowerCase().includes(q));
+          return matchesGrade && matchesUnit && matchesSearch;
+        });
+
+        resultsMeta.textContent =
+          `Showing ${filtered.length} ${filtered.length === 1 ? "application" : "applications"}` +
+          (selectedGrade !== "All Grades" ? ` in ${selectedGrade}` : "");
+
+        appsGrid.innerHTML = "";
+
+        if (filtered.length === 0) {
+          appsGrid.innerHTML = `
+          <div class="empty-state">
+            <h3>No applications listed for ${selectedGrade} yet</h3>
+            <p>Add new entries to the <code>APPS</code> list in <code>index.html</code> as builds become ready.</p>
+          </div>
+        `;
+          return;
+        }
+
+        filtered.forEach((app) => {
+          const hasApp = Boolean(app.appUrl && app.appUrl !== "#");
+          const hasVideo = Boolean(app.videoUrl && app.videoUrl !== "#");
+
+          const card = document.createElement("article");
+          card.className = "card";
+          card.innerHTML = `
+          <div class="card-banner" style="background: ${app.gradient};">
+            <div class="badge-row">
+              <span class="grade-pill" data-grade="${app.grade}">${app.grade}</span>
+              <span class="unit-pill">${app.unit}</span>
+            </div>
+            <span aria-hidden="true">${app.icon}</span>
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">${app.title}</h2>
+            <p class="card-desc">${app.description}</p>
+            <div class="tags">
+              ${app.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-primary" ${hasApp ? "" : 'aria-disabled="true"'} data-url="${app.appUrl}" data-title="${app.grade} · ${app.title}">
+                ▶ Launch App
+              </button>
+              <button class="btn btn-video" ${hasVideo ? "" : 'aria-disabled="true" title="Add YouTube embed URL to videoUrl"'} data-url="${app.videoUrl}" data-title="${app.grade} · ${app.title} (Video)">
+                🎬 Watch Video
+              </button>
+            </div>
+          </div>
+        `;
+          appsGrid.appendChild(card);
+        });
+      }
+
+      // Event Listeners
+      gradeBar.addEventListener("click", (e) => {
+        const btn = e.target.closest(".grade-btn");
+        if (!btn) return;
+        selectedGrade = btn.dataset.grade;
+        selectedUnit = "All Units";
+        renderGradeTabs();
+        renderUnitFilters();
+        renderCards();
+      });
+
+      unitBar.addEventListener("click", (e) => {
+        const btn = e.target.closest(".unit-btn");
+        if (!btn) return;
+        selectedUnit = btn.dataset.unit;
+        renderUnitFilters();
+        renderCards();
+      });
+
+      searchInput.addEventListener("input", (e) => {
+        searchQuery = e.target.value;
+        renderCards();
+      });
+
+      appsGrid.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-url]");
+        if (!btn || btn.getAttribute("aria-disabled") === "true") return;
+
+        const url = btn.dataset.url;
+        modalTitle.textContent = btn.dataset.title;
+        modalIframe.src = url;
+        modalExternalLink.href = url;
+        modal.classList.add("open");
+      });
+
+      function closeModal() {
+        modal.classList.remove("open");
+        modalIframe.src = "";
+      }
+
+      closeModalBtn.addEventListener("click", closeModal);
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) closeModal();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal.classList.contains("open"))
+          closeModal();
+      });
+
+      // Initialize
+      renderGradeTabs();
+      renderUnitFilters();
+      renderCards();
+    </script>
+  </body>
+</html>
