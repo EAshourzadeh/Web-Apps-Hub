@@ -1,94 +1,155 @@
-# Smart English — Interactive Classroom Games Hub
+# SMART English — Digital Learning Showcase
 
-A standalone, dependency-free web portfolio and classroom launcher built with vanilla HTML5, CSS3, and JavaScript (ES6+). It organizes interactive ESL/EFL web applications and video walkthroughs by grade level and curriculum unit for classroom smartboards, projectors, tablets, and web sharing.
+A standalone, dependency-free digital learning portfolio and classroom launcher built with vanilla HTML5, CSS3, and JavaScript (ES6+). Designed for **Ankara Yayıncılık / SMART English**, it presents interactive ESL/EFL classroom applications, multi-grade project families, prototypes, legacy archives, and video walkthroughs in a clean, executive- and classroom-ready interface.
 
 ---
 
 ## Features
 
-* **Grade-Level Navigation (`All Grades`, `Grade 2` – `Grade 8`):** Dynamically displays the active game count for each grade tab and gracefully handles upcoming grade levels.
-* **Dynamic Unit & Theme Filtering:** Automatically generates unit/theme filter pills based on the currently selected grade tab.
-* **Real-Time Keyword Search:** Instant filtering across game titles, curriculum units, descriptions, and pedagogical tags (e.g., *Speaking*, *Comparatives*, *Board Race*).
-* **In-Page 16:9 Interactive Preview Modal:**
-  * **Launch App:** Opens the live Cloudflare Workers / Netlify web application directly inside an embedded modal frame, complete with a **Open Fullscreen in New Tab ↗** link for full-screen smartboard play.
-  * **Watch Video:** Opens gameplay walkthroughs or teacher demo videos in the same modal player. Buttons automatically activate when a valid `videoUrl` is provided.
-* **Zero Dependencies & Offline-Ready:** Single-file `index.html` architecture with no external CSS/JS libraries, frameworks, or build steps required.
+* **Four-Pillar Showcase Architecture:**
+  * **Overview (`#/`):** Executive hero section with a live stats strip automatically calculated from `catalog.js`, four category cards, and a featured projects preview.
+  * **Applications (`#/applications`):** Current interactive classroom games organized by **Grade** (`All Grades`, `Grade 2` – `Grade 8`) and canonical textbook **Theme** (`Theme 1` – `Theme 8`), complete with real-time keyword search.
+  * **Projects & Demos (`#/projects`):** Showcases multi-grade product families (**SMART Readers** for Grades 02–03) and HTML5 prototypes (**SMART Match & Catch**).
+  * **Legacy Showcase (`#/legacy`):** Historical archive grouped automatically by era and platform (Adobe Flash/Animate & ActionScript 3, XML-driven smartboard platforms).
+  * **Videos & Walkthroughs (`#/videos`):** Searchable video library auto-generated from the `videos` arrays across all catalog entries.
+* **Shareable Hash-Routed Project Details (`#/project/<id>`):**
+  * Every item has a direct, shareable URL (e.g., `#/project/smart-readers`, `#/project/smart-match-catch`, `#/project/g5-t1-pizza-word-race`).
+  * Displays pedagogical purpose, target grade/theme, technology stack, status badge (`Released`, `Demo`, `In Development`, `Legacy`), included modules/child builds, playable demos, and walkthrough videos.
+* **Embed Risk Mitigation (`inline` vs. `external-first`):**
+  * Lightweight HTML5 games support embedded previewing (`embedMode: "inline"`) alongside an **Open in New Tab ↗** fallback.
+  * Complex Articulate Storyline 360 publications (such as **SMART Readers**) use `embedMode: "external-first"` so they launch directly in a full browser tab with native scaling, audio playback, and fullscreen controls.
+* **Zero Dependencies & Offline-Ready:** Runs cleanly via double-click (`file://`) on Windows/macOS smartboards as well as on static web hosts without build tools, bundlers, or CORS issues.
 
 ---
 
 ## Project Structure
 
 ```text
-├── index.html   # Complete single-file application (HTML, CSS, data catalog, and UI logic)
-└── README.md    # Documentation and maintenance guide
+├── index.html   # Application shell, sticky top navigation, and script/style imports
+├── style.css    # Responsive dark theme, status pills, grid cards, and detail layouts
+├── catalog.js   # Unified data catalog (window.SHOWCASE_GRADES & window.SHOWCASE_CATALOG)
+├── app.js       # Hash router, safe DOM builders, dynamic filters, and views
+└── README.md    # Documentation and expansion guide
 ```
 
 ---
 
-## Deployment
+## Live Deployment & Local Usage
 
-Because the hub is a single self-contained HTML file, it requires no build command or server-side runtime:
+### Live Showcase
+Open **https://webapps-hub.learninglabs.workers.dev/** in any modern web browser.
 
+### Deploying Updates
+Because the project consists purely of static files, no build step or package manager is required:
 1. **Cloudflare Pages / Workers (Static Assets):**
-   * Upload the folder containing `index.html`.
+   * Upload the project folder containing `index.html`, `style.css`, `catalog.js`, and `app.js`.
    * Leave the **Build command** empty and set the **Output directory** to the root folder (`/`).
 2. **Netlify:**
-   * Drag and drop the project folder onto Netlify Drop, or connect your Git repository with no build command.
+   * Drag and drop the project folder onto Netlify Drop, or deploy from Git with no build command.
 3. **Local / Offline Classroom Use:**
-   * Open `index.html` directly in any modern browser (Chrome, Edge, Firefox, Safari) or serve locally via VS Code Live Server / `python -m http.server`.
-
-## Run
-
-Open https://webapps-hub.learninglabs.workers.dev/ in a modern browser.
+   * Double-click `index.html` directly in Chrome, Edge, Firefox, or Safari (`file://` works out of the box because data is loaded via `catalog.js`).
 
 ---
 
 ## How to Expand Later
 
-All content is managed inside the `GRADES` and `APPS` arrays near the bottom of `index.html` inside the `<script>` tag.
+All content updates are **data-only edits** inside `catalog.js`. You do not need to modify `index.html`, `style.css`, or `app.js` to add new games, grades, readers, legacy items, or videos.
 
-### 1. Adding Games for New Grades (Grade 2, 3, 4, 7, or 8)
+### 1. Adding a New Application (Grades 2, 3, 4, 7, or 8)
 
-Copy an existing game object inside the `APPS` array and update its fields. Make sure the `grade` value matches one of the strings in `GRADES` (`"Grade 2"`, `"Grade 3"`, `"Grade 4"`, `"Grade 5"`, `"Grade 6"`, `"Grade 7"`, or `"Grade 8"`):
+Append a new object to `window.SHOWCASE_CATALOG` in `catalog.js`. Ensure `grade` matches one of the strings in `window.SHOWCASE_GRADES` and `theme` follows `"Theme 1"` through `"Theme 8"`:
 
 ```javascript
 {
+  id: "g4-t1-classroom-challenge",
+  type: "application",
+  family: "SMART Classroom Games",
+  status: "Released",
   grade: "Grade 4",
-  unit: "Unit 1",
+  theme: "Theme 1",
+  year: "2026",
   title: "Classroom Objects Challenge",
+  subtitle: "Classroom Objects · Interactive Team Game",
   icon: "🎒",
   gradient: "linear-gradient(135deg, #38bdf8, #0284c7)",
-  description: "Interactive team vocabulary game practicing classroom objects and prepositions.",
-  tags: ["Classroom Objects", "Vocabulary", "2–4 Teams"],
-  appUrl: "https://your-game-subdomain.smart-english.workers.dev/",
-  videoUrl: ""
+  summary: "Interactive team vocabulary game practicing classroom objects and prepositions.",
+  purpose: "Reinforce core unit vocabulary and spatial prepositions in whole-class play.",
+  tech: ["HTML5", "CSS3", "Vanilla JavaScript", "Cloudflare Workers"],
+  demo: {
+    url: "https://your-game.smart-english.workers.dev/",
+    embedMode: "inline",
+    aspectRatio: "16:9"
+  },
+  screenshots: [],
+  videos: []
 },
 ```
 
-* The grade tab counter, unit filter pills, and search index update automatically when you save and reload `index.html`.
+* Grade tab counters, theme filter buttons, search results, and the Overview stats strip update automatically.
 
-### 2. Adding or Updating Demo Videos
+### 2. Adding a Grade to an Existing Project Family (e.g., SMART Readers Grade 04)
 
-To enable the **🎬 Watch Video** button on any card, add a YouTube embed URL to the `videoUrl` field:
-
-1. Open your video on YouTube and copy its **Video ID** (the characters after `v=` in `https://www.youtube.com/watch?v=VIDEO_ID`).
-2. Format it as an embed link: `https://www.youtube.com/embed/VIDEO_ID`.
-3. Paste it into the game's object:
+Locate the `"smart-readers"` entry in `catalog.js`, update its `grade` and `subtitle` if desired (e.g., `"Grades 2–4"`), and add a new object to its `children` array:
 
 ```javascript
-videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+{
+  title: "Grade 04",
+  subtitle: "Reading books and Read & Check",
+  summary: "Standalone Storyline 360 interactive reader and comprehension suite for Grade 4.",
+  url: "https://read-check-g04.learninglabs.workers.dev/"
+}
 ```
 
-* Leave `videoUrl: ""` (empty string) if a video is not ready yet; the button will remain disabled until a URL is added.
+### 3. Adding Demonstration Videos
 
-### 3. Customizing Card Visuals
+Add one or more objects to the `videos` array inside any entry in `catalog.js` using a YouTube embed URL (`https://www.youtube.com/embed/VIDEO_ID`):
 
-* **`icon`:** Any emoji or short symbol displayed in the center of the card banner.
-* **`gradient`:** Any valid CSS `linear-gradient(...)` background value to give each unit or game type a distinct visual identity.
+```javascript
+videos: [
+  {
+    title: "Pizza Word Race — Classroom Gameplay Walkthrough",
+    embedUrl: "https://www.youtube.com/embed/YOUR_VIDEO_ID",
+    duration: "2:15"
+  }
+]
+```
+
+* Adding a video automatically displays it on the project's `#/project/<id>` details page, adds it to the **Videos & Walkthroughs** (`#/videos`) section, and updates the navigation and Overview video counters.
+
+### 4. Adding Legacy Showcase Entries
+
+Add an object with `type: "legacy"`, `status: "Legacy"`, and an `era` string (matching an existing era heading to group alongside it, or a new era string to create a new section):
+
+```javascript
+{
+  id: "legacy-project-slug",
+  type: "legacy",
+  family: "Adobe Animate & ActionScript 3 Era",
+  status: "Legacy",
+  grade: "Primary",
+  theme: null,
+  era: "Adobe Animate & ActionScript 3 (2016–2019)",
+  year: "2018",
+  title: "Legacy Activity Title",
+  subtitle: "Adobe Animate · ActionScript 3.0",
+  icon: "🎞️",
+  gradient: "linear-gradient(135deg, #6d28d9, #3b0764)",
+  summary: "Brief description of the historical smartboard or digital textbook application.",
+  purpose: "Pedagogical goal and classroom context.",
+  tech: ["Adobe Animate", "ActionScript 3.0"],
+  demo: {
+    url: null,
+    embedMode: "none",
+    note: "Historical archive entry."
+  },
+  screenshots: [],
+  videos: []
+}
+```
 
 ---
 
 ## Credits
 
-Created by **Ehsan Ashour Zadeh** for educational use.  
-**Ankara Yayıncılık / Smart English — 2026**
+Created by **Ehsan Ashour Zadeh** for educational-showcase use.  
+**Ankara Yayıncılık / SMART English — 2026**
